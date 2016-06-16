@@ -8,7 +8,6 @@
  * @name ModalDialog
  * @cat Plugins/Modal
  * @author Michael Truka
- * test test test
  */
 
 (function($) {
