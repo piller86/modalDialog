@@ -22,7 +22,7 @@ Control how quickly*(in milliseconds)* the modal opens or closes:
 $(element).modalDialog({slideSpeed:600});
 ```
 
-Change the appearance and behavior of the modal any time you want
+Change the appearance and behavior of the modal any time you want:
 ```
 $('#modal1').modalDialog({ header: { text: 'Initial Modal Heading' } });
 ----------------------------------------------------------------------
