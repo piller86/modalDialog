@@ -1,5 +1,6 @@
 # modalDialog jQuery plug-in
 ###Simple jQuery modal dialog plug-in
+###### Self contained! No additional CSS needed! Flexible! Customizable!
 
 See a Live Demo on [Plnkr.co](https://run.plnkr.co/plunks/wbQ4ga/)
 
