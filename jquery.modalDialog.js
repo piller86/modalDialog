@@ -10,26 +10,29 @@
  * @author Michael Truka
  */
 
-(function($) {
+(function ($, global) {
   var shadowLayerCreated = false;
   var shadowLayerOpen = false;
   var focusEventAttached = false;
+  var resizeEventAttached = false;
   var $shadowLayer = $('<div></div>');
   var dialogList = [];
   var presetCss = { //Styles that can not change in order for everything to work smoothly 
     modal: {
       css: {
-        'margin': '0 auto',
         'display': 'inline-block',
         'overflow': 'hidden',
         'box-sizing': 'border-box'
       },
       positionCss: {
         'position': 'fixed',
-        'width': '100%',
+        'right': '0',
+        'top': '0',
+        'bottom': '0',
         'left': '0',
         'overflow': 'auto',
-        'box-sizing': 'border-box'
+        'box-sizing': 'border-box',
+        'margin':'0'
       }
     },
     shadow: {
@@ -59,20 +62,20 @@
     }
   };
 
-  var modal = $.modalDialog = new function() {
+  var modal = $.modalDialog = new function () {
     this.defaults = {
       modal: {
         css: {
           'background-color': '#F2F2F2',
           'border': '1px solid #444444',
           'border-radius': '5px',
-          'box-shadow': '2px 2px 5px #333333'
+          'box-shadow': '2px 2px 5px #333333',
+          'margin-top': '10%',
+          'margin-bottom': '10px'
         },
         positionCss: {
-          'top': '10%',
           'text-align': 'center',
-          'z-index': '1001',
-          'bottom': '10%'
+          'z-index': '1001'
         }
       },
       shadow: {
@@ -101,11 +104,12 @@
         showCloseButton: true,
         closeIcon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGnRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdjMuNS4xMDD0cqEAAAUUSURBVEhLvZR5UJRlHMf33ZUjYbndxYVdLkNuUGiVxoPA4RBYEO9rWUQOXU5RO5zMqdG0qShJEUNJURTJGO4QGR1TQJRT5AZzHKO0KDFFcHe//d41aRw1+6tn5jvvNc/n+f6+z+99OJz/e2yTWE76ZLq9bY6Px1tHfb0TTrzp884pX5+MQqlXRL6bo9s+GxE/TWDG/Gdf74osmN2OdtYHvD021MhCrjatWTbcG68YG0iMVfXHK1Tt8hWPfogIuX1SOqMwy0Eyf4fQXP+V8O3WQl6Wu9O8qtDAC9fjosdvb07BLdKPGSkY3JSM/jQl+lMSMZAUj744Bc6HLBg54uaYLTN8zeSl8F0SS162h5P0THhwY19SgvrmljTc2JKKgYxk9KUr0ZOyAV1JCejYsB7tCTFoi4tGm2IV6mQh6s0iQUmcmbHwhfBs52m25UH+lf2pGzU3CDpALnvSNqKLgJ3KeHQkxmqBzbFyNCpWo1G+EvWrl6Fh1VJUzfdVJ1laHDTjck2fg5+eI93SvD76PgvsTU9CNwGv781Ef14u2slpy3o5rsasweXt29CRdwh1FMWFZYtwfkkEzsmCsc/l9VFHPZ14AvMm4LtEAm5tWFBLT1qShoV2Jieibft7+H1oCGMj93CjIB+X4xW4lJGKob4+jD14gN6ik6hdGoGzi0JxJiIEZfNmw58/uZnL4VhNgI+KheIra1eoeijTTtqga1R6G8Vxr7cbGpUKjx8+xM3asxjq7oIGwOjwb2j+4jNUR4WjOmIhKmUEDglAjMBsVJ/hRBKY+DRKxAJ/Fta5NR3XyHErld6UuA5tH2zD3eYmaNRqqB8/1l4f3PkFrfuzUL08ClWLwlAZGYpyUll4EFLFU9WTGc5uQuppwbUSgawjlZxu3YTW9GQ0URRXaPfrqPwWgoyPjpLPJ+PWpYuoWSdHFWVbsViG8sXhKI0KQwnFkWJjBXJ8jJB8LfiiRDC7LXYtWjenoon69QptXIMyDldp8+4ODmidqsbGtLGw+XaXFKOKOqN8aSRKaYESAhdRFHKhBXQ5nFOENNaCKyRC08ZAv4d11EKsyzrWLcUwPPQT1GoVlX8HHceOat2yi4xT5q30XEybdzosCMfnzkKO+3T4GehrKNzcCcduejpMvdSztjYsEDVUUnXkQtTERmOY3N6nzmjYswsV1FoV8lW4WX8Jf/56F+d3fogjvt447OWCgy7TsFNsCSsed5ygb09kzLqud3VYXjx7xmh5oB9KF8xDsf8cVBLo+4R1KKRWKvCdiWNSLxQEB+A7xRoc8nbXAg842SHT3hqRRgbQ4XB+JtT8Z3r5nJ3I/Gt766qiNzw131JpRXOlOEGOjhMs38cDR2a6Is/TGblujshxdiCgPfY72uIrBzGU5kYQPXGbR7Ig/XPqJZoYMkpTvuvHVoKuXJqQ5+FEMDd8M8MVhz2dtEDWYfZ0OwLaIMveCp9aT8Emggp5DIjUQkB/0qSJH+TpjbeeLnelkYGP0ty4Y6fIQpMpscSXtiJkOVhjL4HY+8/FQuyZao73pxhjCV8fYh5XTfMHSQGkyc9Bn74w53K57rqTXGbp6xasNjK4l2bG1+ywMMJHpB3kLtnEEIsN9eGqw9MYMJw/aF4pKZzEnsuvPPgZanRTPsMEGTJMvjGXuWbEZUboeZzeP6JaB4lQRqCNpGnPdMFLLT/7gf3nDUjsWcsCXEjOJBuS2d/AV7r8t7XYyS/SS+f8BfkQtHBvgqhmAAAAAElFTkSuQmCC'
       },
+      offClickClose: false, 
       slideSpeed: 200,
       startOpen: false, //Not Overwritable
       debug: false,
-      postOpen: function() {}, //Not Overwritable
-      postClose: function() {} //Not Overwritable
+      postOpen: function () { }, //Not Overwritable
+      postClose: function () { } //Not Overwritable
     };
 
     function openModalDialog(e, overwriteSettings) {
@@ -116,6 +120,7 @@
       var c = pop.config;
       var oc = {};
       $.extend(true, oc, c, overwriteSettings);
+      pop.overwriteSettings = oc;
 
       if (!c.isOpen) {
         $('body').css('overflow', 'hidden');
@@ -135,6 +140,16 @@
           pop.$header.hide();
         }
 
+        if (oc.offClickClose) {
+          $pop.on('click.modalScope', function (e) {
+            if (e.target === pop) {
+              $pop.trigger('closeModal');
+            }
+            e.stopPropagation;
+            return false;
+          });
+        }
+
         if (!shadowLayerOpen) {
           $shadowLayer.css(oc.shadow.css);
           oc.shadow.fadeIn ? $shadowLayer.stop().fadeIn(100, openModal) : $shadowLayer.show(0, openModal);
@@ -148,9 +163,19 @@
         $('*').blur();
         $(pop.dialog).css(oc.modal.css);
 
-        $pop.css(oc.modal.positionCss).slideDown(oc.slideSpeed, postOpen);
-        pop.scrollTop = 0;
+        $pop.css(oc.modal.positionCss);
+
+        if (!resizeEventAttached) {
+          if (oc.modal.css['margin-top'].indexOf('%') > -1) {
+            $(global).on('resize.modalScope', recalculatePosition);
+            resizeEventAttached = true;
+          }
+        }
+
         pop.isOpen = true;
+        recalculatePosition();
+        $pop.slideDown(oc.slideSpeed, postOpen);
+        pop.scrollTop = 0;
 
         function postOpen() {
           c.postOpen.call(this);
@@ -158,7 +183,7 @@
             oc.callBack.call(this);
           }
 
-          setTimeout(function() {
+          setTimeout(function () {
             if (!focusEventAttached) {
               $('*').on('focus.modalScope', focusOnDialog);
               focusEventAttached = true;
@@ -185,7 +210,7 @@
           if (elemFound) {
             return;
           }
-          
+
           if (typeof pop === 'undefined' || typeof $pop === 'undefined') {
             return;
           }
@@ -193,8 +218,8 @@
           e.stopPropagation();
           try {
             log('Forcing focus back on modal window', pop.config);
-          } catch (e) {}
-          var fcsElem = $pop.find('a, input, select, textarea, button').filter(function() {
+          } catch (e) { }
+          var fcsElem = $pop.find('a, input, select, textarea, button').filter(function () {
             return !($(this).css('visibility') == 'hidden' || $(this).css('display') == 'none' || !$(this).is(':visible'));
           });
 
@@ -209,6 +234,23 @@
                 $('.hidFocusElemPop').remove();
               }
               break;
+          }
+        }
+      }
+
+      function recalculatePosition() {
+        var percentage, newHeight, positionHeight, pop, oc;
+        for (var i = 0; i < dialogList.length; i++) {
+          if (dialogList[i].isOpen) {
+            pop = dialogList[i];
+            $pop = $(pop);
+            oc = pop.overwriteSettings;
+            positionHeight = $pop.outerHeight(true);
+            if (oc.modal.css['margin-top'].indexOf('%') > -1) {
+              percentage = parseFloat(oc.modal.css['margin-top']) / 100.0;
+              newHeight = (positionHeight * percentage);
+              $(pop.dialog).css({ 'margin-top': 'calc(' + percentage + ' * ' + positionHeight + 'px)' });
+            }
           }
         }
       }
@@ -237,7 +279,10 @@
           oc.shadow.fadeIn ? $shadowLayer.stop().fadeOut(100) : $shadowLayer.hide();
           $('body').css('overflow', 'visible');
           $('*').off('focus.modalScope');
+          $(pop).off('click.modalScope');
+          $(global).off('resize.modalScope');
           focusEventAttached = false;
+          resizeEventAttached = false;
           log('Focus event detached', c);
           shadowLayerOpen = false;
         }
@@ -256,7 +301,7 @@
 
     this.log = log;
 
-    this.setup = function(passElem, c) {
+    this.setup = function (passElem, c) {
       var $pop;
 
       if (passElem.nodeName !== 'DIV') { //Ensures that a div is used.
@@ -303,7 +348,7 @@
         'cursor': 'pointer',
         'border': 'none'
       });
-      pop.$closeButton.click(function() {
+      pop.$closeButton.click(function () {
         $pop.trigger('closeModal');
       });
       pop.$header.append(pop.$closeButton);
@@ -322,17 +367,18 @@
     };
   };
 
-  $.fn.modalDialog = function(settings) {
+  $.fn.modalDialog = function (settings) {
     if (!shadowLayerCreated) {
       //Create shadowLayer as property that can be accessed
       $('body').append($shadowLayer);
       shadowLayerCreated = true;
     }
-    return this.each(function() {
+    return this.each(function () {
       var c, pop;
       c = {};
       $.extend(true, c, modal.defaults, settings);
       modal.setup(this, c);
     });
   };
-})(jQuery);
+})(jQuery, window);
+
