@@ -1,9 +1,10 @@
 /*
  * ModalDialog 2.0 - Modal pop up boxes made easy!
  * Version 2.1
- * @requires jQuery v1.11.0+
+ * @requires jQuery v1.5.0+
  *
  * Copyright (c) 2016 Michael Truka
+ * Licensed under the MIT license
  * @type jQuery
  * @name ModalDialog
  * @cat Plugins/Modal
