@@ -1,6 +1,6 @@
 {
   "name": "modaldialog",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Simple jQuery modal dialog plug-in for any site.  Easy to use, highly customizable with not need for a css file.",
   "main": "jquery.modalDialog.js",
   "scripts": {
@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/piller86/modalDialog#readme",
   "dependencies": {
-      "jquery": ">=1.5"
+    "jquery": ">=1.5"
   }
 }
