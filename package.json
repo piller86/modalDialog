@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/piller86/modalDialog/issues"
   },
-  "homepage": "https://github.com/piller86/modalDialog#readme"
+  "homepage": "https://github.com/piller86/modalDialog#readme",
+  "dependencies": {
+      "jquery": ">=1.5"
+  }
 }
