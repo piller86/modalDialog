@@ -1,0 +1,29 @@
+{
+  "name": "modaldialog",
+  "version": "0.2.7",
+  "description": "Simple jQuery modal dialog plug-in for any site.  Easy to use, highly customizable with not need for a css file.",
+  "main": "jquery.modalDialog.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piller86/modalDialog.git"
+  },
+  "keywords": [
+    "modal",
+    "dialog",
+    "jQuery",
+    "jquery-plugin",
+    "lightweight",
+    "simple",
+    "customizable",
+    "plug-in"
+  ],
+  "author": "Michael Truka",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/piller86/modalDialog/issues"
+  },
+  "homepage": "https://github.com/piller86/modalDialog#readme"
+}
