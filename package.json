@@ -1,6 +1,6 @@
 {
   "name": "modaldialog",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Simple jQuery modal dialog plug-in for any site.  Easy to use, highly customizable with not need for a css file.",
   "main": "jquery.modalDialog.js",
   "scripts": {

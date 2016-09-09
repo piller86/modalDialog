@@ -1,6 +1,6 @@
 /*
  * ModalDialog 2.0 - Modal pop up boxes made easy!
- * Version 2.1
+ * Version 2.8
  * @requires jQuery v1.5.0+
  *
  * Copyright (c) 2016 Michael Truka
@@ -180,7 +180,7 @@
 
         function postOpen() {
           c.postOpen.call(this);
-          if (oc.callBack === "function") {
+          if (typeof oc.callBack === "function") {
             oc.callBack.call(this);
           }
 
